@@ -50,6 +50,9 @@
         padding: 4px;
         box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
       }
+      path.leaflet-interactive:focus {
+        outline: none;
+      }
     </style>
   </head>
 
@@ -60,12 +63,8 @@
 
     <script>
       // =====================
-      // BASEMAP
+      // BASEMAP (SATELLITE)
       // =====================
-
-      var osm = L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      );
 
       var satellite = L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -76,21 +75,10 @@
       // =====================
 
       var map = L.map("map", {
-        center: [10.5, 105.5],
-        zoom: 7,
-        layers: [osm],
+        center: [12, 112],
+        zoom: 5,
+        layers: [satellite],
       });
-
-      // =====================
-      // SWITCH BASEMAP
-      // =====================
-
-      var baseMaps = {
-        OpenStreetMap: osm,
-        Satellite: satellite,
-      };
-
-      L.control.layers(baseMaps).addTo(map);
 
       // =====================
       // DATA (CHỈ SỬA SỐ)
@@ -228,6 +216,176 @@
             onEachFeature: onEachFeature,
           }).addTo(map);
         });
+      // =====================
+      // CAC DAO HOANG SA - TRUONG SA
+      // =====================
+
+      var islands = {
+        type: "FeatureCollection",
+        features: [
+          // HOANG SA
+          {
+            type: "Feature",
+            properties: { name: "Đảo Phú Lâm" },
+            geometry: { type: "Point", coordinates: [112.33, 16.83] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Linh Côn" },
+            geometry: { type: "Point", coordinates: [112.6, 16.5] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Quang Hòa" },
+            geometry: { type: "Point", coordinates: [112.8, 16.6] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Tri Tôn" },
+            geometry: { type: "Point", coordinates: [111.2, 15.78] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Hữu Nhật" },
+            geometry: { type: "Point", coordinates: [111.63, 16.5] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Duy Mộng" },
+            geometry: { type: "Point", coordinates: [111.73, 16.45] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Quang Ảnh" },
+            geometry: { type: "Point", coordinates: [112.45, 16.38] },
+          },
+
+          // TRUONG SA
+          {
+            type: "Feature",
+            properties: { name: "Đảo Song Tử Tây" },
+            geometry: { type: "Point", coordinates: [114.32, 11.43] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Song Tử Đông" },
+            geometry: { type: "Point", coordinates: [114.35, 11.45] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Thị Tứ" },
+            geometry: { type: "Point", coordinates: [114.28, 11.05] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Loại Ta" },
+            geometry: { type: "Point", coordinates: [114.43, 10.68] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Nam Yết" },
+            geometry: { type: "Point", coordinates: [114.36, 10.18] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Sơn Ca" },
+            geometry: { type: "Point", coordinates: [114.48, 10.37] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Sinh Tồn" },
+            geometry: { type: "Point", coordinates: [114.31, 9.88] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Sinh Tồn Đông" },
+            geometry: { type: "Point", coordinates: [114.35, 9.9] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Trường Sa" },
+            geometry: { type: "Point", coordinates: [112.35, 8.65] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo An Bang" },
+            geometry: { type: "Point", coordinates: [112.83, 7.92] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Phan Vinh" },
+            geometry: { type: "Point", coordinates: [113.7, 8.97] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Tốc Tan" },
+            geometry: { type: "Point", coordinates: [113.85, 8.8] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Núi Le" },
+            geometry: { type: "Point", coordinates: [114.65, 8.38] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Tiên Nữ" },
+            geometry: { type: "Point", coordinates: [114.7, 8.85] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Đá Lát" },
+            geometry: { type: "Point", coordinates: [113.8, 8.8] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Đá Tây" },
+            geometry: { type: "Point", coordinates: [112.23, 9.18] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Đá Đông" },
+            geometry: { type: "Point", coordinates: [114.02, 10.16] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Cô Lin" },
+            geometry: { type: "Point", coordinates: [114.31, 9.78] },
+          },
+          {
+            type: "Feature",
+            properties: { name: "Đảo Len Đao" },
+            geometry: { type: "Point", coordinates: [114.31, 9.74] },
+          },
+        ],
+      };
+
+      var islandLayer = L.geoJSON(islands, {
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, {
+            radius: 4,
+            color: "#000",
+            fillColor: "#ffff00",
+            fillOpacity: 1,
+          });
+        },
+
+        onEachFeature: function (feature, layer) {
+          layer.bindTooltip(feature.properties.name, {
+            permanent: false,
+            direction: "top",
+          });
+        },
+      }).addTo(map);
+
+      // chỉ hiển thị khi zoom lớn
+
+      map.on("zoomend", function () {
+        if (map.getZoom() >= 7) {
+          map.addLayer(islandLayer);
+        } else {
+          map.removeLayer(islandLayer);
+        }
+      });
 
       // =====================
       // LEGEND
