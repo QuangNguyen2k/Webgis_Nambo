@@ -1,0 +1,259 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>WebGIS Nam Bộ</title>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+      }
+
+      #map {
+        height: 100vh;
+      }
+
+      .legend {
+        background: white;
+        padding: 10px;
+        line-height: 1.6;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+      }
+
+      .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 0.8;
+      }
+      .label-vung {
+        font-weight: bold;
+        font-size: 12px;
+        color: black;
+        background: white;
+        padding: 2px 4px;
+        border-radius: 3px;
+        border: 1px solid #666;
+      }
+      .leaflet-tooltip {
+        font-weight: bold;
+        font-size: 13px;
+        background: white;
+        border-radius: 4px;
+        border: 1px solid #333;
+        padding: 4px;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+      // =====================
+      // BASEMAP
+      // =====================
+
+      var osm = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      );
+
+      var satellite = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      );
+
+      // =====================
+      // MAP
+      // =====================
+
+      var map = L.map("map", {
+        center: [10.5, 105.5],
+        zoom: 7,
+        layers: [osm],
+      });
+
+      // =====================
+      // SWITCH BASEMAP
+      // =====================
+
+      var baseMaps = {
+        OpenStreetMap: osm,
+        Satellite: satellite,
+      };
+
+      L.control.layers(baseMaps).addTo(map);
+
+      // =====================
+      // DATA (CHỈ SỬA SỐ)
+      // =====================
+
+      var dataChange = {
+        N1: -12,
+        N2: 15,
+        N3: 42,
+        N4: 18,
+
+        L1: 25,
+        L2: 15,
+        L3: 5,
+        L4: 30,
+        L5: 22,
+
+        M1: 15,
+        M2: 20,
+        M3: 18,
+      };
+
+      // =====================
+      // COLOR FUNCTION
+      // =====================
+
+      function getColor(d) {
+        return d > 50
+          ? "#006400"
+          : d > 30
+            ? "#2E8B57"
+            : d > 10
+              ? "#66CDAA"
+              : d > 0
+                ? "#C1FFC1"
+                : d > -10
+                  ? "#FFD6D6"
+                  : d > -30
+                    ? "#FF8C8C"
+                    : d > -50
+                      ? "#FF4D4D"
+                      : "#8B0000";
+      }
+
+      // =====================
+      // STYLE
+      // =====================
+
+      function style(feature) {
+        var code = feature.properties.name;
+        var value = dataChange[code];
+
+        if (value === undefined) {
+          return {
+            weight: 1,
+            color: "white",
+            fillOpacity: 0,
+          };
+        }
+
+        return {
+          fillColor: getColor(value),
+          weight: 1,
+          opacity: 1,
+          color: "white",
+          fillOpacity: 0.7,
+        };
+      }
+
+      // =====================
+      // HOVER HIGHLIGHT
+      // =====================
+
+      function highlightFeature(e) {
+        var layer = e.target;
+
+        layer.setStyle({
+          weight: 3,
+          color: "#000",
+          fillOpacity: 0.9,
+        });
+      }
+
+      // =====================
+      // RESET HIGHLIGHT
+      // =====================
+
+      function resetHighlight(e) {
+        geojson.resetStyle(e.target);
+      }
+
+      // =====================
+      // CLICK ZOOM
+      // =====================
+
+      function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+      }
+
+      // =====================
+      // POPUP + EVENTS
+      // =====================
+
+      function onEachFeature(feature, layer) {
+        var code = feature.properties.name;
+        var value = dataChange[code];
+
+        if (value !== undefined) {
+          var label = "<b>" + code + "</b><br>Giá trị: " + value;
+
+          layer.bindTooltip(label, {
+            sticky: true,
+          });
+        }
+
+        layer.on({
+          mouseover: highlightFeature,
+          mouseout: resetHighlight,
+          click: zoomToFeature,
+        });
+      }
+
+      // =====================
+      // LOAD GEOJSON
+      // =====================
+
+      var geojson;
+
+      fetch("12vungdubao.geojson")
+        .then((res) => res.json())
+
+        .then((data) => {
+          geojson = L.geoJSON(data, {
+            style: style,
+            onEachFeature: onEachFeature,
+          }).addTo(map);
+        });
+
+      // =====================
+      // LEGEND
+      // =====================
+
+      var legend = L.control({ position: "bottomright" });
+
+      legend.onAdd = function () {
+        var div = L.DomUtil.create("div", "legend");
+
+        div.innerHTML = "<b>Mức thay đổi</b><br>";
+
+        div.innerHTML +=
+          '<i style="background:#006400"></i> >50<br>' +
+          '<i style="background:#2E8B57"></i> 30-50<br>' +
+          '<i style="background:#66CDAA"></i> 10-30<br>' +
+          '<i style="background:#C1FFC1"></i> 0-10<br>' +
+          '<i style="background:#FFD6D6"></i> 0 đến -10<br>' +
+          '<i style="background:#FF8C8C"></i> -10 đến -30<br>' +
+          '<i style="background:#FF4D4D"></i> -30 đến -50<br>' +
+          '<i style="background:#8B0000"></i> < -50<br>';
+
+        return div;
+      };
+
+      legend.addTo(map);
+    </script>
+  </body>
+</html>
